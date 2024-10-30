@@ -5,6 +5,10 @@
     Any live cell with more than 3 live neighbors dies
 */
 
+const WIDTH = 50;
+const HEIGHT = 50;
+const CELL_SIZE = 10;
+
 function countNeighbours(grid, x, y) {
 	if (x < 0 || y < 0 || sizeof(grid) < x || sizeof(grid[x]) < y) {
 		return 0;
@@ -49,11 +53,9 @@ function initialiseGrid(width, height) {
 }
 
 function setup() {
-	const WIDTH = 50;
-	const HEIGHT = 50;
   let grid = initializeGrid(WIDTH, HEIGHT);
 	
-	drawCanvas(WIDTH, HEIGHT)
+	drawCanvas(WIDTH*CELL_SIZE, HEIGHT*CELL_SIZE)
 	
 	// Initial State
 	const mx = floor(width/2);
@@ -64,11 +66,15 @@ function setup() {
 }
 
 function drawGrid(grid) {
-	
+	for (let x = 0; x < width; ++x) {
+    for (let y = 0; y < height; ++y) {
+			fill(grid[x][y]);
+			square(x, y, CELL_SIZE);
+		}
+	}
 }
 
 function draw() {
   nextState(grid);
-	
-	
+	drawGrid(grid);
 }
