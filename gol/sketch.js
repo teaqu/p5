@@ -6,35 +6,21 @@
 */
 
 function countNeighbours(grid, x, y) {
-  var n = 0;
-  if (grid[x][y - 1]) {
-    n++;
-  }
-  if (grid[x][y - 1]) {
-    n++;
-  }
-  if (grid[x - 1][y]) {
-    n++;
-  }
-  if (grid[x + 1][y]) {
-    n++;
-  }
-  if (grid[x - 1][y - 1]) {
-    n++;
-  }
-  if (grid[x + 1][y + 1]) {
-    n++;
-  }
-  if (grid[x - 1][y + 1]) {
-    n++;
-  }
-  if (grid[x + 1][y - 1]) {
-    n++;
-  }
-  return count;
+	if (x < 0 || y < 0 || sizeof(grid) < x || sizeof(grid[x]) < y) {
+		return 0;
+	}
+	
+  return grid[x][y - 1]
+		+ grid[x][y - 1]
+		+ grid[x - 1][y]
+		+ grid[x + 1][y]
+		+ grid[x - 1][y - 1]
+		+ grid[x + 1][y + 1]
+		+ grid[x - 1][y + 1]
+		+ grid[x + 1][y - 1];
 }
 
-function move(grid) {
+function nextState(grid) {
   for (var x = 0; x < width; ++x) {
     for (var y = 0; y < height; ++y) {
       // count neighbours
@@ -42,25 +28,47 @@ function move(grid) {
       
       if (grid[x][y] && (neighbours > 2 || neighbours > 3)) {
         grid[x][y] = 0;
+      } else if (! grid[x][y] && countNeighbours(grid, x, y) >= 3) {
+				grid[x][y] = 1;
       }
     }
   }
 }
 
-function setup() {
-  var grid = [];
-  for (var x = 0; x < width; ++x) {
-    for (var y = 0; y < height; ++y) {
+function initialiseGrid(width, height) {
+	let grid = [];
+	for (let x = 0; x < width; ++x) {
+    for (let y = 0; y < height; ++y) {
       if (grid[x] == undefined) {
         grid[x] = [];
       }
       grid[x][y] = 0;
     }
   }
+	return grid;
+}
 
+function setup() {
+	const WIDTH = 50;
+	const HEIGHT = 50;
+  let grid = initializeGrid(WIDTH, HEIGHT);
+	
+	drawCanvas(WIDTH, HEIGHT)
+	
+	// Initial State
+	const mx = floor(width/2);
+	const my = floor(height/2);
+	grid[mx][my] = 1;
+	grid[mx - 1][my] = 1;
+	grid[mx + 1][my] = 1;
+}
 
+function drawGrid(grid) {
+	
 }
 
 function draw() {
-  
+  nextState(grid);
+	
+	
 }
