@@ -9,72 +9,77 @@ const WIDTH = 50;
 const HEIGHT = 50;
 const CELL_SIZE = 10;
 
-function countNeighbours(grid, x, y) {
-	if (x < 0 || y < 0 || sizeof(grid) < x || sizeof(grid[x]) < y) {
+let grid = [];
+
+function getCell(x, y) {
+	if (x < 0 || y < 0 || grid.length <= x || grid.length <= y) {
 		return 0;
 	}
-	
-  return grid[x][y - 1]
-		+ grid[x][y - 1]
-		+ grid[x - 1][y]
-		+ grid[x + 1][y]
-		+ grid[x - 1][y - 1]
-		+ grid[x + 1][y + 1]
-		+ grid[x - 1][y + 1]
-		+ grid[x + 1][y - 1];
+  return grid[x][y];
 }
 
-function nextState(grid) {
-  for (var x = 0; x < width; ++x) {
-    for (var y = 0; y < height; ++y) {
-      // count neighbours
-      const neighbours = countNeighbours(grid, x, y); 
-      
-      if (grid[x][y] && (neighbours > 2 || neighbours > 3)) {
-        grid[x][y] = 0;
-      } else if (! grid[x][y] && countNeighbours(grid, x, y) >= 3) {
-				grid[x][y] = 1;
+function countNeighbours(x, y) {
+  return getCell(x, y - 1) + getCell(x, y + 1)
+		+ getCell(x - 1, y) + getCell(x + 1, y)
+		+ getCell(x - 1, y - 1)	+ getCell(x + 1, y + 1)
+		+ getCell(x - 1, y + 1) + getCell(x + 1, y - 1);
+}
+
+function nextState() {
+  let newGrid = blankGrid();
+  for (var x = 0; x < WIDTH; ++x) {
+    for (var y = 0; y < HEIGHT; ++y) {
+      const neighbours = countNeighbours(x, y); 
+      if (grid[x][y] && (neighbours < 2 || neighbours > 3)) {
+        newGrid[x][y] = 0;
+      } if (! grid[x][y] && neighbours >= 3) {
+				newGrid[x][y] = 1;
+      }
+      if (mouseIsPressed) {
+        newGrid[floor(mouseX / CELL_SIZE)][floor(mouseY / CELL_SIZE)] = 1;
       }
     }
   }
+  grid = newGrid;
 }
 
-function initialiseGrid(width, height) {
-	let grid = [];
-	for (let x = 0; x < width; ++x) {
-    for (let y = 0; y < height; ++y) {
-      if (grid[x] == undefined) {
-        grid[x] = [];
+function blankGrid() {
+  newGrid = [];
+	for (let x = 0; x < WIDTH; ++x) {
+    for (let y = 0; y < HEIGHT; ++y) {
+      if (newGrid [x] == undefined) {
+        newGrid[x] = [];
       }
-      grid[x][y] = 0;
+      newGrid[x][y] = 0;
     }
   }
-	return grid;
+  return newGrid;
 }
 
 function setup() {
-  let grid = initializeGrid(WIDTH, HEIGHT);
-	
-	drawCanvas(WIDTH*CELL_SIZE, HEIGHT*CELL_SIZE)
+	createCanvas(WIDTH*CELL_SIZE, HEIGHT*CELL_SIZE)
+  background(255);
+  grid = blankGrid();
 	
 	// Initial State
-	const mx = floor(width/2);
-	const my = floor(height/2);
+	const mx = floor(WIDTH/2);
+	const my = floor(HEIGHT/2);
 	grid[mx][my] = 1;
 	grid[mx - 1][my] = 1;
 	grid[mx + 1][my] = 1;
+	grid[mx + 1][my + 1] = 1;
 }
 
-function drawGrid(grid) {
-	for (let x = 0; x < width; ++x) {
-    for (let y = 0; y < height; ++y) {
-			fill(grid[x][y]);
-			square(x, y, CELL_SIZE);
+function drawGrid() {
+	for (let x = 0; x < WIDTH; ++x) {
+    for (let y = 0; y < HEIGHT; ++y) {
+			fill(grid[x][y] * 255);
+			square(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE);
 		}
 	}
 }
 
 function draw() {
-  nextState(grid);
-	drawGrid(grid);
+  nextState();
+	drawGrid();
 }
