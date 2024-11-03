@@ -50,13 +50,8 @@ function nextState() {
   for (var x = 0; x < WIDTH; ++x) {
     for (var y = 0; y < HEIGHT; ++y) {
       const neighbours = countNeighbours(x, y); 
-      if (grid[x][y] && (neighbours < 2 || neighbours > 3)) {
-        newGrid[x][y] = 0;
-      } else if (grid[x][y]) {
-        newGrid[x][y] = 1;
-      }
-      
-      if (! grid[x][y] && neighbours >= 3 || grid[x][y] && (neighbours == 2 || neighbours == 1)) {
+      if (! grid[x][y] && neighbours >= 3 || 
+        grid[x][y] && (neighbours == 2 || neighbours == 3)) {
 				newGrid[x][y] = 1;
       }
     }
