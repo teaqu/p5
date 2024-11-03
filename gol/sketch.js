@@ -15,7 +15,7 @@ let grid = [];
 let pause = false;
 
 function isValidPos(x, y) {
-  return x > 0 && y > 0 && x < WIDTH && y < HEIGHT;
+  return x >= 0 && y >= 0 && x < WIDTH && y < HEIGHT;
 }
 
 function getCell(x, y) {
@@ -42,19 +42,15 @@ function countNeighbours(x, y) {
 }
 
 function drawCells(value) {
-  for (var x = 0; x < WIDTH; ++x) {
-    for (var y = 0; y < HEIGHT; ++y) {
-      const x = floor(mouseX / CELL_SIZE);
-      const y = floor(mouseY / CELL_SIZE);
-      setCell(x, y, value);
-    }
-  }
+  const x = floor(mouseX / CELL_SIZE);
+  const y = floor(mouseY / CELL_SIZE);
+  setCell(x, y, value);
 }
 
 function nextState() {
-  let newGrid = blankGrid();
-  for (var x = 0; x < WIDTH; ++x) {
-    for (var y = 0; y < HEIGHT; ++y) {
+  let newGrid = createBlankGrid();
+  for (let x = 0; x < WIDTH; ++x) {
+    for (let y = 0; y < HEIGHT; ++y) {
       const neighbours = countNeighbours(x, y);
       if (
         (!grid[x][y] && neighbours == 3) ||
@@ -68,24 +64,17 @@ function nextState() {
   grid = newGrid;
 }
 
-function blankGrid() {
-  newGrid = [];
-  for (let x = 0; x < WIDTH; ++x) {
-    for (let y = 0; y < HEIGHT; ++y) {
-      if (newGrid[x] == undefined) {
-        newGrid[x] = [];
-      }
-      newGrid[x][y] = 0;
-    }
-  }
-  return newGrid;
+function createBlankGrid() {
+  return Array(WIDTH)
+    .fill()
+    .map(() => Array(HEIGHT).fill(0));
 }
 
 function setup() {
   createCanvas(WIDTH * CELL_SIZE, HEIGHT * CELL_SIZE);
   stroke(200);
 
-  grid = blankGrid();
+  grid = createBlankGrid();
 
   // Initial State
   const mx = floor(WIDTH / 2);
